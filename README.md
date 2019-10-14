@@ -1,5 +1,7 @@
 # Deep Incremental Hashing Network for Efficient Image Retrieval
 
+> NUS-WIDE implementation will be available later. Lack of gpu :( 
+
 ## REQUIREMENTS
 1. pytorch>=1.0
 2. loguru
@@ -54,6 +56,7 @@ nus-wide: 18 original classes, 3 incremental classes.
 ADSH cifar-10 MAP@ALL | 0.6433 | 0.6434 | 0.6451 | 0.6424
 +DIHN cifar-10 MAP@ALL | 0.9091 | 0.9117 | 0.9177 | 0.9217
 
-~~ADSH nus-wide-tc21 MAP@5000 | ~~
+~~ADSH nus-wide-tc21 MAP@5000 |~~
+
 ~~+DIHN nus-wide-tc21 MAP@5000 |~~
 
