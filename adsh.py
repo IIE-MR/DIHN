@@ -69,7 +69,7 @@ def train(
         lr_scheduler.step()
 
         # Sample training data for cnn learning
-        train_dataloader, sample_index, _, _ = sample_dataloader(seen_dataloader, num_samples, batch_size, root, dataset)
+        train_dataloader, sample_index, _, _ = sample_dataloader(seen_dataloader, num_samples, num_seen, batch_size, root, dataset)
 
         # Create Similarity matrix
         train_targets = train_dataloader.dataset.get_onehot_targets().to(device)

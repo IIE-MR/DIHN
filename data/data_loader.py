@@ -1,6 +1,8 @@
 import torch
+import os
 import numpy as np
 import data.cifar10 as cifar10
+import data.nus_wide as nuswide
 
 from data.transform import train_transform
 from torch.utils.data.dataloader import DataLoader
@@ -29,25 +31,26 @@ def load_data(dataset, root, num_seen, batch_size, num_workers):
                                                                                                        batch_size,
                                                                                                        num_workers,
                                                                                                        )
-    # elif dataset == 'nus-wide-tc21':
-    #     query_dataloader, seen_dataloader, unseen_dataloader, retrieval_dataloader = nuswide.load_data(root,
-    #                                                                                                    num_seen,
-    #                                                                                                    batch_size,
-    #                                                                                                    num_workers,
-    #                                                                                                    )
+    elif dataset == 'nus-wide-tc21':
+        query_dataloader, seen_dataloader, unseen_dataloader, retrieval_dataloader = nuswide.load_data(root,
+                                                                                                       num_seen,
+                                                                                                       batch_size,
+                                                                                                       num_workers,
+                                                                                                       )
     else:
         raise ValueError("Invalid dataset name!")
 
     return query_dataloader, seen_dataloader, unseen_dataloader, retrieval_dataloader
 
 
-def sample_dataloader(dataloader, num_samples, batch_size, root, dataset):
+def sample_dataloader(dataloader, num_samples, num_seen, batch_size, root, dataset):
     """
     Sample data from dataloder.
 
     Args
         dataloader(torch.utils.data.DataLoader): Dataloader.
         num_samples(int): Number of samples.
+        num_seen(int): Number of seen data points.
         batch_size(int): Batch size.
         root(str): Path of dataset.
         dataset(str): Dataset name.
@@ -67,8 +70,8 @@ def sample_dataloader(dataloader, num_samples, batch_size, root, dataset):
     targets = targets[omega]
     sample_loader = wrap_data(data, targets, batch_size, root, dataset)
 
-    unseen_sample_in_unseen_index = torch.from_numpy(np.array([idx for idx in range(dataloader.dataset.UNSEEN_INDEX.shape[0]) if dataloader.dataset.UNSEEN_INDEX[idx] in omega], np.int))
-    unseen_sample_in_sample_index = torch.from_numpy(np.array([idx for idx in range(omega.shape[0]) if omega[idx] in dataloader.dataset.UNSEEN_INDEX], np.int))
+    unseen_sample_in_unseen_index = omega[omega > num_seen] - num_seen
+    unseen_sample_in_sample_index = (omega > num_seen).nonzero()[0]
 
     return sample_loader, omega, unseen_sample_in_unseen_index, unseen_sample_in_sample_index
 
@@ -97,7 +100,12 @@ def wrap_data(data, targets, batch_size, root, dataset):
             self.onehot_targets = self.targets
 
         def __getitem__(self, index):
-            img = Image.fromarray(self.data[index])
+            if self.dataset == 'cifar-10':
+                img = Image.fromarray(self.data[index])
+            elif self.dataset == 'nus-wide-tc21':
+                img = Image.open(os.path.join(self.root, self.data[index])).convert('RGB')
+            else:
+                raise ValueError('Invalid dataset name!')
             img = self.transform(img)
             return img, self.targets[index], index
 

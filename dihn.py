@@ -75,7 +75,7 @@ def increment(
         lr_scheduler.step()
 
         # Sample training data for cnn learning
-        train_dataloader, sample_index, unseen_sample_in_unseen_index, unseen_sample_in_sample_index = sample_dataloader(retrieval_dataloader, num_samples, batch_size, root, dataset)
+        train_dataloader, sample_index, unseen_sample_in_unseen_index, unseen_sample_in_sample_index = sample_dataloader(retrieval_dataloader, num_samples, num_seen, batch_size, root, dataset)
 
         # Create Similarity matrix
         train_targets = train_dataloader.dataset.get_onehot_targets().to(device)
@@ -102,7 +102,7 @@ def increment(
         # Update B
         expand_U = torch.zeros(num_unseen, code_length).to(device)
         expand_U[unseen_sample_in_unseen_index, :] = U[unseen_sample_in_sample_index, :]
-        new_B = solve_dcc(new_B, U, expand_U, S[:, unseen_dataloader.dataset.UNSEEN_INDEX], code_length, gamma)
+        new_B = solve_dcc(new_B, U, expand_U, S[:, num_seen:], code_length, gamma)
         B = torch.cat((old_B, new_B), dim=0).to(device)
 
         # Total loss
