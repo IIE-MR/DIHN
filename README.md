@@ -9,7 +9,7 @@
 
 2. [NUS-WIDE](https://pan.baidu.com/s/1f9mKXE2T8XpIq8p7y8Fa6Q) Password: uhr3
 
-[NUS-WIDE-Split-txt](https://pan.baidu.com/s/1Hr-WM108WgmnhMAmDM0pfA) Password: xrqd)
+[NUS-WIDE-Split-txt](https://pan.baidu.com/s/1Hr-WM108WgmnhMAmDM0pfA) Password: xrqd
 
 ## USAGE
 ```
